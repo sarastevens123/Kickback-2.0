@@ -6,7 +6,6 @@ from sqlalchemy.orm import joinedload
 
 
 
-
 def create_guest_user(fname, lname, password, email):
     """Create and return a new user."""
 
@@ -14,6 +13,13 @@ def create_guest_user(fname, lname, password, email):
     db.session.add(guest)
     db.session.commit()
     return guest
+
+
+def return_guest_by_id(user_id):
+    """"Returns a user by their ID."""
+
+    return Guest.query.get(user_id)
+
 
 def create_restaurant_user(name, email, password, location):
     """Create and return a new restaurant."""
@@ -33,27 +39,23 @@ def return_all_restaurants():
 
     return Restaurant.query.all()
 
-def return_guest_by_id(user_id):
-    """"Returns a user by their ID."""
-
-    return Guest.query.get(user_id)
 
 def return_restaurant_by_id(restaurant_id):
     """"Returns a restaurant by its ID."""
 
     return Restaurant.query.get(restaurant_id)
 
-def get_Guest_by_email(email):
+def get_guest_by_email(email):
     """Return a user by their email, else returns None."""
 
-    return Guest.query.filter(User.email == email).first()
+    return Guest.query.filter(Guest.email == email).first()
 
 def get_restaurant_by_email(email):
     """Return a restaurant by their email, else returns None."""
 
     return Restaurant.query.filter(Restaurant.email == email).first()
 
-def get_Guest_password(password):
+def get_guest_password(password):
     """Return User password."""
 
     return Guest.query.filter(Guest.password == password).first()
