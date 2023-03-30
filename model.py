@@ -1,8 +1,11 @@
+
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-class Guest(db.model):
+
+class Guest(db.Model):
 
     __tablename__ = "guests"
 
@@ -19,7 +22,7 @@ class Guest(db.model):
         return f"<Guest:{self.fname},{self.lname}>"
 
 
-class Restaurant(db.model):
+class Restaurant(db.Model):
 
     __tablename__ = "restaurants"
 
@@ -35,66 +38,62 @@ class Restaurant(db.model):
     def __repr__(self):
         return f"<Restaurant:{self.name}, Id:{self.id}>"
     
-class GuestReview(db.model):
-    """a review of a particular guest made by the restaurant"""
+class GuestReview(db.Model):
+    """a review of a guest made by the restaurant"""
 
     __tablename__ = "guest_reviews"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.restaurant_id'), nullable=False)
-    guest_id = db.Column(db.Integer, db.ForeignKey('users.user_id'),nullable=False)
+    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.id'), nullable=False)
+    guest_id = db.Column(db.Integer, db.ForeignKey('guests.id'),nullable=False)
     score = db.Column(db.Integer, nullable=False)
     text = db.Column(db.Text, nullable=False)
     
 
-    restaurant = db.relationship("Restaurant", back_populates="guest_review")
-    user = db.relationship("User", back_populates="guest_review")
+    restaurant = db.relationship("Restaurant", back_populates="guest_reviews")
+    guest = db.relationship("Guest", back_populates="guest_reviews")
 
 
     def __repr__ (self):
         return f"<Guest Review:{self.id}>"
 
 
-class RestaurantReview(db.model):
-    """a review of a particular restaurant made by the guest that dined there"""
+class RestaurantReview(db.Model):
+    """a review of a restaurant made by the guest"""
 
 
     __tablename__ = "restaurant_reviews"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    guest_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.restaurant_id'), nullable=False)
+    guest_id = db.Column(db.Integer, db.ForeignKey('guests.id'), nullable=False)
+    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.id'), nullable=False)
     score = db.Column(db.Integer, nullable=False)
     text = db.Column(db.Text)
     
 
-    restaurant = db.relationship("Restaurant", back_populates="restaurant_review")
-    guest = db.relationship("Guest", back_populates="restaurant_review")
+    restaurant = db.relationship("Restaurant", back_populates="restaurant_reviews")
+    guest = db.relationship("Guest", back_populates="restaurant_reviews")
 
 
     def __repr__ (self):
         return f"<Restaurant Review:{self.id}>"
     
+def connect_to_db(app, db_uri="postgresql:///kb", echo=False):
+    """Connect to database."""
 
-def connect_to_db(app):
-    """Connect the database to our Flask app."""
+    
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+    app.config['SQLALCHEMY_ECHO'] = echo
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///kickback"
-    app.config["SQLALCHEMY_ECHO"] = False
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    print("Connected to db!")
-
 
 
 if __name__ == "__main__":
-    from flask import Flask
+    from server import app
 
-    app = Flask(__name__)
     connect_to_db(app)
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS']= True
-    
 
 
 

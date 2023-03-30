@@ -1,11 +1,16 @@
 """CRUD operations"""
+from model import (db, Guest, GuestReview, Restaurant, RestaurantReview, connect_to_db)
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import joinedload
 
-from model import db, User, Restaurant, UserRating, RestaurantRating, connect_to_db
+
+
 
 def create_guest_user(fname, lname, password, email):
     """Create and return a new user."""
 
-    guest = User(fname=fname, lname=lname, password=password, email=email)
+    guest = Guest(fname=fname, lname=lname, password=password, email=email)
     db.session.add(guest)
     db.session.commit()
     return guest
@@ -51,29 +56,29 @@ def get_restaurant_by_email(email):
 def get_Guest_password(password):
     """Return User password."""
 
-    return Guest.query.filter(User.password == password).first()
+    return Guest.query.filter(Guest.password == password).first()
 
 def get_restaurant_password(restaurant_password):
     """Return restaurant password."""
 
     return Restaurant.query.filter(Restaurant.restaurant_password == restaurant_password).first()
 
-def create_restaurant_review(guest_id, restaurant_id, score, text, ):
-    """Creates and returns a restaurant rating."""
+def create_restaurant_review(guest_id, restaurant_id, score, text):
+    """Creates and returns a restaurant review."""
     
-    rating = RestaurantRating(guest_id=guest_id, restaurant_id=restaurant_id, score=score, text=text)
-    db.session.add(rating)
+    review = RestaurantReview(guest_id=guest_id, restaurant_id=restaurant_id, score=score, text=text)
+    db.session.add(review)
     db.session.commit()
-    return rating
+    return review
 
-def create_guest_rating(restaurant_id, guest_id, score, text):
-    """Creates and returns a user rating."""
+def create_guest_review(restaurant_id, guest_id, score, text):
+    """Creates and returns a guest review."""
 
-    rating = UserRating(restaurant_id=restaurant_id, guest_id=guest_id, score=score, text=text)
-    db.session.add(rating)
+    review = GuestReview(restaurant_id=restaurant_id, guest_id=guest_id, score=score, text=text)
+    db.session.add(review)
     db.session.commit()
 
-    return rating
+    return review
 
 def get_average_restaurant_score(restaurant_id):
     """returns an average restaurant score"""
@@ -94,10 +99,10 @@ def get_average_restaurant_score(restaurant_id):
 def get_average_guest_score(user_id):
     """returns an average guest score"""
     total_scores = 0
-    counter = UserRating.query.filter_by(user_id=user_id).count()
+    counter = GuestReview.query.filter_by(user_id=user_id).count()
 
     if counter > 0:
-        reviews = UserRating.query.filter_by(user_id=user_id).all()
+        reviews = GuestReview.query.filter_by(user_id=user_id).all()
 
         for review in reviews:
             total_scores = total_scores + int(review.score)
