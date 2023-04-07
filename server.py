@@ -1,9 +1,9 @@
 from flask import (Flask, render_template, request, flash, session,
                    redirect, jsonify, json)
 from model import connect_to_db, db
-import requests
+
 import crud
-import os
+
 
 app = Flask(__name__)
 app.secret_key = 'SECRET_KEY'
