@@ -30,6 +30,8 @@ def create_new_guest_user():
         db.session.commit(guest)
 
         return jsonify({'user_id' :f"{guest.id}"})
+    
+
         
 
 
