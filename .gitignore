@@ -1,0 +1,6 @@
+env
+.pyc
+secrets.sh
+__pycache__
+.flaskenv
+venv
