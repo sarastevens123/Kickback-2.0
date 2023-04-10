@@ -6,6 +6,8 @@ from model import connect_to_db, db
 import crud
 import os
 
+
+
 #environment variables
 
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
@@ -20,6 +22,54 @@ app.secret_key = os.environ.get('SECRET_KEY')
 def homepage():
 
     return "This is the homepage"
+
+
+
+@app.route('/login', methods=['POST'])
+def login_user():
+    """Login existing user."""
+
+#Input fields for login
+    email = request.json.get('email')
+    password = request.json.get('password')
+
+#Queries both guest, and restaurant tables to get user object
+    guest_user = crud.get_guest_by_email(email)
+    restaurant_user = crud.get_restaurant_by_email(email)
+
+#Checks if the user if a guest
+    if guest_user:
+        if guest_user.password == password:
+            session['user'] = guest_user.id
+            return jsonify({
+                            'id':guest_user.id,
+                            'first name':guest_user.fname,
+                        })
+        else:
+            return jsonify("Incorrect Password")
+#Checks if a user is  a restaurant    
+    if restaurant_user:
+        if restaurant_user.password == password:
+            session['user'] = restaurant_user.id
+            return jsonify({
+                            'id':restaurant_user.id,
+                            'name':restaurant_user.name,
+                        })
+        else:
+            return jsonify("Incorrect Password")
+           
+    else:
+        return jsonify("Account does not exist.Try again, or create a new account.")
+    
+
+
+@app.route('/logout')
+def logout_user():
+    """Logs out a session user"""
+
+    del session['user']
+
+    return "User logged out from session"
 
 @app.route('/create-guest')
 def create_new_guest_user():
