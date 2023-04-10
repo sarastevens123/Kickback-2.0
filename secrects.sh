@@ -1,0 +1,3 @@
+SECRET_KEY = Sara.5029
+GOOGLE_CLIENT_ID = 969858924345-rf0rv7f1od8fiu61euv62bk79jseabid.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET = 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
