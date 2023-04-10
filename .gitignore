@@ -1,7 +1,9 @@
-.env
-.pyc
+
+venv
+.vscode/
+
+env
+pyc
 secrets.sh
 __pycache__
 .flaskenv
-.venv
-.vscode/

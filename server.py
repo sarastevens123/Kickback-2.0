@@ -2,11 +2,19 @@ from flask import (Flask, render_template, request, flash, session,
                    redirect, jsonify, json)
 from model import connect_to_db, db
 
+
 import crud
+import os
 
+#environment variables
 
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
+
+#Flask app
 app = Flask(__name__)
-app.secret_key = 'SECRET_KEY'
+app.secret_key = os.environ.get('SECRET_KEY')
+
 
 @app.route('/')
 def homepage():
